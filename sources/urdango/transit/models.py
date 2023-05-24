@@ -8,8 +8,14 @@ class BusStop(models.Model):
 
 
 class SubwayStation(models.Model):
-    name = models.CharField(max_length=200)
-    location = models.CharField(max_length=200)
+    code = models.CharField(max_length=10)
+    name = models.CharField(max_length=100)
+    name_eng = models.CharField(max_length=100, null=True)
+    line = models.ForeignKey('SubwayLine', on_delete=models.CASCADE, related_name="stations")
+    # location = models.PointField()
+
+    def __str__(self):
+        return self.name
 
 
 class BusLine(models.Model):
@@ -20,7 +26,10 @@ class BusLine(models.Model):
 class SubwayLine(models.Model):
     number = models.CharField(max_length=10)
     name = models.CharField(max_length=200)
-    route_stations = models.ManyToManyField(SubwayStation, through='SubwayRouteStation')
+    route_stations = models.ManyToManyField('SubwayStation', through='SubwayRouteStation')
+
+    def __str__(self):
+        return self.name
 
 
 class BusRouteStop(models.Model):
