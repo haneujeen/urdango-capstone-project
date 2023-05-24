@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subway Stations</title>
+</head>
+<body>
+    <h1>Subway Stations</h1>
+    <ul>
+    {% for station in stations %}
+        <li>{{ station.name }} ({{ station.code }})</li>
+    {% empty %}
+        <li>No stations found.</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
