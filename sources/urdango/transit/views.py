@@ -28,7 +28,6 @@ def get_location_info(location):
     response = requests.get(url, params=params)
     if response.status_code == 200:
         data = response.json()
-        import pdb; pdb.set_trace()
         location_info = data['ServiceResult']['msgBody']['itemList'][0]
         return location_info['gpsX'], location_info['gpsY']
 
