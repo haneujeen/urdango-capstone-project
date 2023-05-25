@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Route</title>
+</head>
+<body>
+    <h1>Your Route</h1>
+    {% if route %}
+<!--        {% for leg in route %}-->
+<!--            <div class="leg">-->
+<!--                <h2>From {{ leg.fname }} to {{ leg.tname }}</h2>-->
+<!--                <p>Distance: {{ leg.distance }}</p>-->
+<!--                <p>Time: {{ leg.time }}</p>-->
+<!--                <p>Route Name: {{ leg.routeNm }}</p>-->
+<!--            </div>-->
+<!--        {% endfor %}-->
+        <h1>Suggested route</h1>
+        <p>{{ path_info }}</p>
+    {% else %}
+        <p>Sorry, no route found.</p>
+    {% endif %}
+</body>
+</html>
