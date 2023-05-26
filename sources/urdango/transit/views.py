@@ -1,5 +1,7 @@
 import requests
 
+from urllib.parse import unquote
+
 from django.shortcuts import render
 from django.conf import settings
 
@@ -15,7 +17,7 @@ def subway_stations(request):
 
 # Helper functions below
 def get_location_info(location):
-    BUS_API_KEY = settings.BUS_API_KEY
+    BUS_API_KEY = unquote(settings.BUS_API_KEY)
 
     url = 'http://ws.bus.go.kr/api/rest/pathinfo/getLocationInfo'
 
@@ -28,12 +30,12 @@ def get_location_info(location):
     response = requests.get(url, params=params)
     if response.status_code == 200:
         data = response.json()
-        location_info = data['ServiceResult']['msgBody']['itemList'][0]
+        location_info = data['msgBody']['itemList'][0]
         return location_info['gpsX'], location_info['gpsY']
 
 
 def get_subway_path_info(start_x, start_y, end_x, end_y):
-    BUS_API_KEY = settings.BUS_API_KEY
+    BUS_API_KEY = unquote(settings.BUS_API_KEY)
 
     url = 'http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoBySubway'
 
@@ -54,7 +56,7 @@ def get_subway_path_info(start_x, start_y, end_x, end_y):
 
 
 def get_bus_path_info(start_x, start_y, end_x, end_y):
-    BUS_API_KEY = settings.BUS_API_KEY
+    BUS_API_KEY = unquote(settings.BUS_API_KEY)
 
     url = 'http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoByBus'
 
@@ -75,7 +77,7 @@ def get_bus_path_info(start_x, start_y, end_x, end_y):
 
 
 def get_bus_sub_path_info(start_x, start_y, end_x, end_y):
-    BUS_API_KEY = settings.BUS_API_KEY
+    BUS_API_KEY = unquote(settings.BUS_API_KEY)
 
     url = 'http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoByBusNSub'
 
