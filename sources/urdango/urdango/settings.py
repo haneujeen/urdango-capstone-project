@@ -44,7 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'transit',
+    'rest_framework',
 ]
+
+
+APSCHEDULER_RUN_AT_START = True
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

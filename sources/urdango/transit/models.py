@@ -2,71 +2,18 @@ from django.db import models
 
 
 # Create your models here.
-class BusStop(models.Model):
-    name = models.CharField(max_length=200)
-    location = models.CharField(max_length=200)
-
-
-class SubwayStation(models.Model):
-    code = models.CharField(max_length=10)
-    name = models.CharField(max_length=100)
-    name_eng = models.CharField(max_length=100, null=True)
-    line = models.ForeignKey('SubwayLine', on_delete=models.CASCADE, related_name="stations")
-    # location = models.PointField()
-
-    def __str__(self):
-        return self.name
-
-
-class BusLine(models.Model):
-    number = models.CharField(max_length=10)
-    name = models.CharField(max_length=200)
-
-
-class SubwayLine(models.Model):
-    number = models.CharField(max_length=10)
-    name = models.CharField(max_length=200)
-    route_stations = models.ManyToManyField('SubwayStation', through='SubwayRouteStation')
-
-    def __str__(self):
-        return self.name
-
-
-class BusRouteStop(models.Model):
-    bus_line = models.ForeignKey(BusLine, on_delete=models.CASCADE)
-    bus_stop = models.ForeignKey(BusStop, on_delete=models.CASCADE)
-    arrival_time = models.TimeField()
-    departure_time = models.TimeField()
-    sequence = models.IntegerField()
-
-
-"""
-might be represented like:
-    BusRouteStop.objects.create(bus_line=my_bus_line, bus_stop=A, sequence=1)
-    BusRouteStop.objects.create(bus_line=my_bus_line, bus_stop=B, sequence=2)
-    BusRouteStop.objects.create(bus_line=my_bus_line, bus_stop=C, sequence=3)
-"""
-
-
-class SubwayRouteStation(models.Model):
-    subway_line = models.ForeignKey(SubwayLine, on_delete=models.CASCADE)
-    subway_station = models.ForeignKey(SubwayStation, on_delete=models.CASCADE)
-    arrival_time = models.TimeField()
-    departure_time = models.TimeField()
-    sequence = models.IntegerField()
-
-
 class Bus(models.Model):
-    bus_identifier = models.CharField(max_length=200)
-    bus_line = models.ForeignKey(BusLine, on_delete=models.CASCADE)
-    current_stop = models.ForeignKey(BusStop, on_delete=models.CASCADE)
-    next_stop = models.ForeignKey(BusStop, related_name='+', on_delete=models.CASCADE)
-    estimated_arrival_time_next_stop = models.TimeField(null=True)
-
-
-class Subway(models.Model):
-    train_identifier = models.CharField(max_length=200)
-    subway_line = models.ForeignKey(SubwayLine, on_delete=models.CASCADE)
-    current_station = models.ForeignKey(SubwayStation, on_delete=models.CASCADE)
-    next_station = models.ForeignKey(SubwayStation, related_name='+', on_delete=models.CASCADE)
-    estimated_arrival_time_next_stop = models.TimeField(null=True)
+    veh_id = models.CharField(max_length=50, primary_key=True)
+    st_id = models.IntegerField()
+    st_ord = models.IntegerField()
+    stop_flag = models.IntegerField()
+    data_tm = models.IntegerField()
+    tm_x = models.FloatField()
+    tm_y = models.FloatField()
+    plain_no = models.CharField(max_length=100)
+    bus_type = models.IntegerField()
+    last_stn_id = models.IntegerField()
+    pos_x = models.FloatField()
+    pos_y = models.FloatField()
+    passenger_load = models.IntegerField()
+    is_full_flag = models.BooleanField(default=False)
