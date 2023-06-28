@@ -11,45 +11,13 @@ const props = defineProps({
 let selectedBus = ref(null);
 let targetBus = ref(null);
 
-const fetchBusPosition = async (busRouteId) => {
-    const response = await axios.get(`http://localhost:8000/get_bus_pos_by_rtid/${busRouteId}`);
-    return response.data.msgBody.itemList;
-};
+const handleClick = (bus) => {
+    console.log("busRouteAbrv: ", bus.busRouteAbrv, " to ", bus.nxtStn)
+    console.log("busRouteId: ", bus.busRouteId, "vehId1: ", bus.vehId1)
+    console.log("My vehId = bus.vehId1")
+    
+}
 
-const fetchStationInfo = async (busRouteId) => {
-    const response = await axios.get(`http://localhost:8000/get_arr_info_by_route_all/${busRouteId}`);
-    return response.data.msgBody.itemList;
-};
-
-const findTargetBus = (busesOnRoute, vehId) => {
-    return busesOnRoute.find(b => b.vehId === vehId);
-};
-
-const findStationName = (stations, stId) => {
-    const station = stations.find(s => s.stId === stId);
-    return station ? station.stNm : null;
-};
-
-const handleClick = async (bus) => {
-    console.log(bus);
-    selectedBus.value = bus;
-    try {
-        const busesOnRoute = await fetchBusPosition(selectedBus.value.busRouteId);
-        targetBus.value = findTargetBus(busesOnRoute, bus.vehId1);
-
-        if (targetBus.value) {
-            console.log("Target: ", targetBus.value.plainNo, targetBus.value.vehId, targetBus.value.lastStnId, targetBus.value.nextStId);
-            const allStationsOnRoute = await fetchStationInfo(selectedBus.value.busRouteId);
-
-            targetBus.value.lastStnNm = findStationName(allStationsOnRoute, targetBus.value.lastStnId);
-            targetBus.value.nextStNm = findStationName(allStationsOnRoute, targetBus.value.nextStId);
-        } else {
-            console.error("Bus not found in the list");
-        }
-    } catch (error) {
-        console.error(error);
-    }
-};
 </script>
 
 <template>
@@ -64,7 +32,9 @@ const handleClick = async (bus) => {
                     v-for="bus in busList"
                 >
                     <div>
-                        {{ bus.busRouteAbrv }} to {{ bus.nxtStn }}
+                        busRouteAbrv: {{ bus.busRouteAbrv }} to {{ bus.nxtStn }}
+                        busRouteId: {{ bus.busRouteId }}
+                        vehId1: {{ bus.vehId1 }}
                         <span class="text-danger">{{ bus.arrmsg1 }}</span>
                     </div>
                     <button 
