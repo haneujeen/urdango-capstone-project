@@ -2,12 +2,13 @@
 import { ref } from 'vue'
 
 const props = defineProps({
-    bus: Object // What's different between getting prop as array and getting it as an object?
+    bus: Object
 })
 </script>
 
 <template>
     <div>
+        <br/><br/>
         <p>{{ bus.plainNo }}</p>
         <!-- <BusScreen/> -->
         <!-- last station, upcoming station, proceeding station 
@@ -23,9 +24,11 @@ const props = defineProps({
         -->
         <p>{{ bus.rtNm }} Estimated Time: {{ bus.traTime }} Travel Speed: {{ bus.traSpd }}</p>
         <p>Last Station Id: {{ bus.lastStnId }}</p>
-        <p>Next Station Id: {{ bus.nstnId }}</p>
+        <p>Next Station Id: {{ bus.this_station_id }}</p>
         <p>Last Station: {{ bus.lastStnNm }}</p>
-        <p>Next Station: {{ bus.nstnNm }}</p>
+        <p>Next Station: {{ bus.this_station_name }}</p>
+        <p>IsLast: {{ bus.isLast }}</p>
+        <p>Next Next Station: {{ bus.next_station_id }} {{ bus.next_station_name }}</p>
         <!-- <StopRequestButton/> -->
     </div>
 </template>

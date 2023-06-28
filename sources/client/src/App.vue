@@ -1,5 +1,6 @@
 <script setup>
 import Tracker from './components/Tracker.vue'
+import WebSocketTest from './WebSocketTest.vue';
 </script>
 
 <template>
@@ -8,6 +9,7 @@ import Tracker from './components/Tracker.vue'
             <img src="./assets/logo.png" class="logo vue" alt="Vue logo" />
         </a>
         <Tracker msg="" />
+        <WebSocketTest/>
     </div>
 </template>
 
