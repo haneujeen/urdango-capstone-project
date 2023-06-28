@@ -11,11 +11,19 @@ const props = defineProps({
 let selectedBus = ref(null);
 let targetBus = ref(null);
 
-const handleClick = (bus) => {
+const handleClick = async (bus) => {
     console.log("busRouteAbrv: ", bus.busRouteAbrv, " to ", bus.nxtStn)
     console.log("busRouteId: ", bus.busRouteId, "vehId1: ", bus.vehId1)
     console.log("My vehId = bus.vehId1")
     
+    try {
+        const response = await axios.get(`http://localhost:8000/get_bus_pos_by_veh_id/${bus.vehId1}`)
+        targetBus.value = response.data.msgBody.itemList[0]
+        console.log(targetBus.value)
+        console.log("Last station of vehicle ", targetBus.value.plainNo, ": ", targetBus.value.lastStnId)
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 </script>
