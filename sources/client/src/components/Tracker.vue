@@ -35,7 +35,7 @@ const handleGetOnButtonClick = () => {
 </script>
 
 <template>
-    <div>
+    <div class="spacing">
         <h1>{{ msg }}</h1>
 
         <SearchBar @search="handleSearchClick" />
@@ -52,5 +52,8 @@ const handleGetOnButtonClick = () => {
 <style scoped>
 .read-the-docs {
     color: #888;
+}
+.spacing > * {
+    margin: 2rem 0;
 }
 </style>
