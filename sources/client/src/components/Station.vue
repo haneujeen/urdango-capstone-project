@@ -17,13 +17,30 @@ const handleClick = async (bus) => {
     console.log("My vehId = bus.vehId1")
     
     try {
-        const response = await axios.get(`http://localhost:8000/get_bus_pos_by_veh_id/${bus.vehId1}`)
-        targetBus.value = response.data.msgBody.itemList[0]
+        const lastStnIdResponse = await axios.get(`http://localhost:8000/get_bus_pos_by_veh_id/${bus.vehId1}`)
+        targetBus.value = lastStnIdResponse.data.msgBody.itemList[0]
         console.log(targetBus.value)
         console.log("Last station of vehicle ", targetBus.value.plainNo, ": ", targetBus.value.lastStnId)
+    
+        const nstnId1Response = await axios.get(`http://localhost:8000/get_arr_info_by_route_all/${bus.busRouteId}`)
+        const item = (nstnId1Response.data.msgBody.itemList).find(i => i.vehId1 === targetBus.value.vehId)
+        console.log(item)
+        console.log("Creating field nstnId in targetBus ref")
+        targetBus.value.nstnId = item.nstnId1
+        console.log(`Vehicle Id of Target Bus: ${targetBus.value.vehId}
+                    Last Station Id and Next Station Id of Target Bus: ${targetBus.value.lastStnId} ${targetBus.value.nstnId}`)
+
+        const stnNameResponse = await axios.get(`http://localhost:8000/get_arr_info_by_route_all/${bus.busRouteId}`)
+        const lastStnNmItem = (stnNameResponse.data.msgBody.itemList).find(i => i.stId === targetBus.value.lastStnId)
+        const nstnNmItem = (stnNameResponse.data.msgBody.itemList).find(i => i.stId === targetBus.value.nstnId)
+        console.log(lastStnNmItem, nstnNmItem)
     } catch (error) {
         console.error(error);
     }
+}
+
+const fetchStationName = async (stnId) => {
+
 }
 
 </script>
