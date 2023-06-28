@@ -35,13 +35,12 @@ const handleClick = async (bus) => {
         const nstnNmItem = (stnNameResponse.data.msgBody.itemList).find(i => i.stId === targetBus.value.nstnId)
         console.log(lastStnNmItem, nstnNmItem)
         console.log(lastStnNmItem.stNm, nstnNmItem.stNm, "😆😆😆")
+
+        targetBus.value.lastStnNm = lastStnNmItem.stNm
+        targetBus.value.nstnNm = nstnNmItem.stNm
     } catch (error) {
         console.error(error);
     }
-}
-
-const fetchStationName = async (stnId) => {
-
 }
 
 </script>

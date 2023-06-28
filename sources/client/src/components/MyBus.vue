@@ -10,9 +10,9 @@ const props = defineProps({
     <div>
         <p>{{ bus.plainNo }}</p>
         <p>Last Station Id: {{ bus.lastStnId }}</p>
-        <p>Next Station Id: {{ bus.nextStId }}</p>
+        <p>Next Station Id: {{ bus.nstnId }}</p>
         <p>Last Station: {{ bus.lastStnNm }}</p>
-        <p>Next Station: {{ bus.nextStNm }}</p>
+        <p>Next Station: {{ bus.nstnNm }}</p>
         <!-- <BusScreen/> -->
     </div>
 </template>
