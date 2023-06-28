@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios';
 import SearchBar from './SearchBar.vue';
 import StationList from './StationList.vue'
 
@@ -11,16 +12,20 @@ const showList = ref(false);
 const showCard = ref(false);
 const showStop = ref(false);
 
-const url = 'http://ws.bus.go.kr/api/rest/stationinfo/getStationByName?serviceKey=GMDNZxLlo35v0mYu1b%2BEExd5aIdZ93RCUBhUBo2w73LWCtz%2Ft%2F%2FKdGfzDVUdcyqljjwvNa5Dtd56uELhovFZRw%3D%3D&stSrch=덕성'
-const key = 'GMDNZxLlo35v0mYu1b%2BEExd5aIdZ93RCUBhUBo2w73LWCtz%2Ft%2F%2FKdGfzDVUdcyqljjwvNa5Dtd56uELhovFZRw%3D%3D'
-    
-const handleSearchClick = () => {
-    showList.value = true;
-}
+const stationList = ref(null);
 
-const handleListItemClick = () => {
-    showList.value = false;
-    showCard.value = true;
+const handleSearchClick = async (query) => {
+    showList.value = true;
+
+    console.log(query)
+    
+    try {
+        const response = await axios.get(`http://localhost:8000/get_station_by_name/${query}/`);
+        stationList.value = response.data.msgBody.itemList;
+        console.log(stationList.value)
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 const handleGetOnButtonClick = () => {
@@ -35,25 +40,10 @@ const handleGetOnButtonClick = () => {
 
         <SearchBar @search="handleSearchClick" />
 
-        <StationList v-if="showList" @list-item-click="handleListItemClick" />
-
-        <div class="card" v-if="showCard">
-            <div class="card-body">
-                <h5 class="card-title">station name (01234)</h5>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        vehicle arrives in 3 minutes...
-                        <button type="button" class="btn btn-light" @click="handleGetOnButtonClick">button</button>
-                    </li>
-                    <!-- Other list items -->
-                </ul>
-            </div>
-        </div>
-
-        <div v-if="showStop">
-            <p>this stop is ..., next stop is ....</p>
-            <button type="button" class="btn btn-warning">stop</button>
-        </div>
+        <StationList
+            v-if="stationList"
+            :stationList="stationList"
+        />
 
         <p class="app-title">App Title</p>
     </div>

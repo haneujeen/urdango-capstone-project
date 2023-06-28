@@ -1,5 +1,5 @@
 <script setup>
-import SearchStation from './components/SearchStation.vue'
+import Tracker from './components/Tracker.vue'
 </script>
 
 <template>
@@ -7,7 +7,7 @@ import SearchStation from './components/SearchStation.vue'
         <a href="https://vuejs.org/" target="_blank">
             <img src="./assets/logo.png" class="logo vue" alt="Vue logo" />
         </a>
-        <SearchStation msg="" />
+        <Tracker msg="" />
     </div>
 </template>
 
