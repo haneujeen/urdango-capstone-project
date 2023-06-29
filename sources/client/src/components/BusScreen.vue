@@ -18,6 +18,7 @@ const requestStop = () => {
 
 <template>
         <div class="card border-0 px-0 pb-0 text-muted shadow" style="background: linear-gradient(#f6f6f6 0%, #ffffff 100%); border-radius: 25px;">
+            
             <div class="card-body text-start mx-4 mb-3">
                 <div class="mb-3 stop">
                     <p class="m-0"><small>Current Stop</small></p>
@@ -36,14 +37,36 @@ const requestStop = () => {
                 <p class="m-0"><small>{{ busData.rtNm }} {{ busData.plainNo }} Speed: km/h Estimated Time: 000</small></p>
             </div>
         </div>
-        <br/><br/>
-        <button class="btn btn-lg btn-light text-dark rounded-pill border-0" :class="{ 'active': stopRequested }" @click="requestStop">
-            Request Stop
-        </button>
+        <p class="text-start pt-3">REQUEST STOP</p>
+        
+        <div class="card border-0 px-0 pt-0 text-muted bg-light" style="border-radius: 25px;">
+            <div class="card-header text-bg-light border-0 text-start" style="border-radius: 25px 25px 0 0">
+                <p class="m-0"><small>Device Name: My iPhone Requested User: Someone</small></p>
+            </div>
+            <div class="m-4 mb-3">
+                <button class="btn btn-lg btn-light text-dark rounded-pill border-0" :class="{ 'active': stopRequested }" @click="requestStop">
+                    Request Stop
+                </button>
+            </div>
+            <div class="mx-3 text-start text-muted" style="border-radius: 25px;">
+                <span class="form-check form-switch">
+                    <input class="form-check-input input-lg" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
+                    <label class="form-check-label" for="flexSwitchCheckChecked">Push Notification</label>
+                </span>
+           
+            </div>
+        </div>
 
 </template>
 
 <style scoped>
+.form-check-input {
+    width: 3em;
+    height: 1em;
+}
+.form-check-input:checked::before {
+    background-color: #ffc107 !important; /* checked color */
+}
 .active {
     background-color: rgb(220, 72, 72) !important;
     color: white !important;
