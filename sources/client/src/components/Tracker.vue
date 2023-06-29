@@ -23,15 +23,15 @@ const handleSearchClick = async (query) => {
         const response = await axios.get(`http://localhost:8000/get_station_by_name/${query}/`);
         stationList.value = response.data.msgBody.itemList;
         console.log(stationList.value)
+
+        // If stationList.value.stNm is not unique, send the request to getStationByUid endpoint
+        // to get the direction and specify the station
+
     } catch (error) {
         console.error(error);
     }
 }
 
-const handleGetOnButtonClick = () => {
-    showStop.value = true;
-    showCard.value = false;
-}
 </script>
 
 <template>
@@ -50,7 +50,7 @@ const handleGetOnButtonClick = () => {
 </template>
 
 <style scoped>
-.read-the-docs {
+.app-title {
     color: #888;
 }
 .spacing > * {

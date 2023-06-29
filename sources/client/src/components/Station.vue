@@ -14,6 +14,7 @@ let targetBus = ref(null);
 const handleClick = async (bus) => {
     console.log("busRouteAbrv: ", bus.busRouteAbrv, " to ", bus.nxtStn)
     console.log("busRouteId: ", bus.busRouteId, "vehId1: ", bus.vehId1)
+    console.log("adirection: ", bus.adirection)
     console.log("My vehId = bus.vehId1")
     
     try {
@@ -33,7 +34,7 @@ const handleClick = async (bus) => {
 </script>
 
 <template>
-    <div class="card">
+    <div class="card" v-if="!targetBus">
         <div class="card-body">
             <h5 class="card-title">{{ station.stNm }} ({{ station.arsId }})</h5>
             <ul class="list-group list-group-flush">

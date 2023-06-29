@@ -17,3 +17,4 @@ class Bus(models.Model):
     pos_y = models.FloatField()
     passenger_load = models.IntegerField()
     is_full_flag = models.BooleanField(default=False)
+

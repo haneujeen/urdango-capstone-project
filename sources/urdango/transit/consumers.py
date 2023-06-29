@@ -7,7 +7,8 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
         self.veh_id = self.scope['url_route']['kwargs']['veh_id']
         self.bus_route_id = self.scope['url_route']['kwargs']['bus_route_id']
 
-        # Accept the connection
+        # fetch initial target bus data
+
         await self.accept()
 
         await self.send(text_data=json.dumps({
@@ -26,3 +27,4 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+
