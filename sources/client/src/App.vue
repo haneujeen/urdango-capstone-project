@@ -6,7 +6,7 @@ import WebSocketTest from './WebSocketTest.vue';
 <template>
     <div>
         <a href="https://vuejs.org/" target="_blank">
-            <img src="./assets/logo.png" class="logo vue" alt="Vue logo" />
+            <img src="./assets/otter-solid.svg" class="logo vue" alt="Vue logo" />
         </a>
         <Tracker msg="" />
         <WebSocketTest/>
