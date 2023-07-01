@@ -18,3 +18,9 @@ class Bus(models.Model):
     passenger_load = models.IntegerField()
     is_full_flag = models.BooleanField(default=False)
 
+
+class PushSubscription(models.Model):
+    endpoint = models.URLField(max_length=400)
+    p256dh = models.CharField(max_length=255)
+    auth = models.CharField(max_length=255)
+
