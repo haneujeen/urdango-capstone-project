@@ -27,6 +27,8 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 SEOUL_API_KEY = os.getenv('SEOUL_API_KEY')
 BUS_API_KEY = os.getenv('BUS_API_KEY')
+PUBLIC_VAPID_KEY = os.getenv('PUBLIC_VAPID_KEY')
+PRIVATE_VAPID_KEY = os.getenv('PRIVATE_VAPID_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

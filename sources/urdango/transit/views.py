@@ -1,11 +1,4 @@
 from rest_framework import viewsets
-from .models import Bus
-from .serializers import BusDataSerializer
-
-class BusDataViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Bus.objects.all()
-    serializer_class = BusDataSerializer
-
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import requests
@@ -133,35 +126,34 @@ from .models import PushSubscription
 from .serializers import PushSubscriptionSerializer
 
 class PushSubscriptionView(views.APIView):
-    def post(self, request, *args, **kwargs):
-        data = {
-            'endpoint': request.data['endpoint'],
-            'p256dh': request.data['keys']['p256dh'],
-            'auth': request.data['keys']['auth']
-        }
+    serializer = PushSubscriptionSerializer
 
+    def post(self, request, *args, **kwargs):
         print('request data before it\'s passed to the serializer: ', request.data)
 
-        serializer = PushSubscriptionSerializer(data=data)
+        data = request.data.copy()
+        keys = data.pop('keys', {})
+        data.update(keys)
+        print(data)
+
+        serializer = self.serializer(data=data)
+
         if serializer.is_valid():
             subscription = serializer.save()
             print('📦 I received a new push subscription!', subscription)
 
-            subscription_info = {
-                "endpoint": subscription.endpoint,
-                "keys": {
-                    "p256dh": subscription.p256dh,
-                    "auth": subscription.auth
-                }
+            test_message = {
+                "title": "Here goes a title",
+                "body": "This is a message body.",
+                "icon": "/static/images/icon.png",
+                "url": "https://url.com"
             }
 
-            print('subscription data before it\'s passed to the PushService: ', subscription_info)
-            message = {"title": "Hello!", "body": "You have successfully subscribed to our push notifications!"}
-
-            push_service = PushService(subscription_info, message)
+            push_service = PushService(subscription, test_message)
             push_service.send_push()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print("Serializer errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):

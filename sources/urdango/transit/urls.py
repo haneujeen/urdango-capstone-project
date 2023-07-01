@@ -2,11 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import *
 
-router = DefaultRouter()
-router.register(r'busdata', BusDataViewSet, basename='busdata')
-
 urlpatterns = [
-    path('', include(router.urls)),
     path('get_station_by_name/<str:name>/', get_station_by_name, name='get_station_by_name'),
     path('get_station_by_uid/<str:id>/', get_station_by_uid, name='get_station_by_uid'),
     path('get_bus_pos_by_rtid/<str:rtid>/', get_bus_pos_by_rtid, name='get_bus_pos_by_rtid'),

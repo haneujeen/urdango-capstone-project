@@ -24,8 +24,6 @@ class PushService:
         return vapid.sign(claims)
 
     def send_push(self):
-        # Get the Vapid headers
-        vapid_headers = self._get_vapid_headers()
 
         try:
             # Send push notification
