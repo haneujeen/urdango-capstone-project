@@ -126,35 +126,27 @@ from .models import PushSubscription
 from .serializers import PushSubscriptionSerializer
 
 class PushSubscriptionView(views.APIView):
-    serializer = PushSubscriptionSerializer
-
     def post(self, request, *args, **kwargs):
         print('request data before it\'s passed to the serializer: ', request.data)
+        subscription = request.data
 
-        data = request.data.copy()
-        keys = data.pop('keys', {})
-        data.update(keys)
-        print(data)
+        # TODO: Validate the subscription data here
 
-        serializer = self.serializer(data=data)
+        PushSubscription.objects.create(subscription=subscription)
 
-        if serializer.is_valid():
-            subscription = serializer.save()
-            print('📦 I received a new push subscription!', subscription)
+        print('📦 I received a new push subscription!', subscription)
 
-            test_message = {
-                "title": "Here goes a title",
-                "body": "This is a message body.",
-                "icon": "/static/images/icon.png",
-                "url": "https://url.com"
-            }
+        test_message = {
+            "title": "Here goes a title",
+            "body": "This is a message body.",
+            "icon": "/static/images/icon.png",
+            "url": "https://url.com"
+        }
 
-            push_service = PushService(subscription, test_message)
-            push_service.send_push()
+        push_service = PushService(subscription, test_message)
+        push_service.send_push()
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print("Serializer errors:", serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Subscription created."}, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk, format=None):
         try:
@@ -181,26 +173,3 @@ class PushMessageView(APIView):
         push_service = PushService(subscription, message)
         push_service.send_push()
         return Response(status=202)
-
-from .models import PushSubscription
-
-def test(request):
-    subscription = PushSubscription.objects.first()
-    print("Subscription: ", subscription)
-
-    subscription_info = {
-        "endpoint": subscription.endpoint,
-        "keys": {
-            "p256dh": subscription.p256dh,
-            "auth": subscription.auth
-        }
-    }
-
-    print("Subscription Info: ", subscription_info)
-
-    message = {"title": "Hello!", "body": "This is a test notification."}
-    print("Message: ", message)
-
-    push_service = PushService(subscription_info, message)
-    push_service.send_push()
-    print("Push notification sent.")

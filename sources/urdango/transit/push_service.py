@@ -10,21 +10,7 @@ class PushService:
         self.private_vapid_key = settings.PRIVATE_VAPID_KEY
         self.public_vapid_key = settings.PUBLIC_VAPID_KEY
 
-    def _get_vapid_headers(self):
-        # Create a Vapid object with private key
-        vapid = Vapid.from_string(self.private_vapid_key)
-
-        # Define the Vapid claims (subject)
-        claims = {
-            'aud': '/'.join(self.subscription["endpoint"].split('/')[0:3]),
-            'sub': 'mailto:eujeenhan@gmail.com'
-        }
-
-        # Return the signed Vapid headers
-        return vapid.sign(claims)
-
     def send_push(self):
-
         try:
             # Send push notification
             webpush(
