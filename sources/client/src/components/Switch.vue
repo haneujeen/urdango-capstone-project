@@ -1,6 +1,7 @@
 <!-- Switch.vue -->
 <script setup>
 import { ref, watch, onMounted } from 'vue'
+import axios from 'axios';
 
 let isChecked = ref(false)
 const isDisabled = ref(false)
@@ -32,9 +33,9 @@ watch(isChecked, async (newVal) => {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
         const registration = await navigator.serviceWorker.ready;
         if (newVal) {
-            await subscribeUserToPush(registration);
+            const pk = await subscribeUserToPush(registration);
         } else {
-            await unsubscribeUserFromPush(registration);
+            await unsubscribeUserFromPush(registration, pk);
         }
     }
 });
@@ -44,24 +45,42 @@ const subscribeUserToPush = async (registration) => {
     const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
-            'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U',
+            applicationServerPublicKey,
         ),
     });
 
-    console.log('User is subscribed.', JSON.stringify(subscription));
-    // TODO: Send the subscription object to server
-    return subscription;
+    console.log('User is subscribed.', subscription.toJSON());
+
+    const data = subscription.toJSON()
+
+    axios.post('http://localhost:8000/subscription/', data)
+        .then(response => {
+            console.log('Server received the subscription data 📦')
+            // response == Response(serializer.data, status=status.HTTP_201_CREATED)
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    return response.data.pk;
 };
 
-const unsubscribeUserFromPush = async (registration) => {
+const unsubscribeUserFromPush = async (registration, pk) => {
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
         await subscription.unsubscribe();
         console.log('User is unsubscribed.');
+        
+        // Send a request to your server to delete the subscription
+        try {
+            const response = await axios.delete(`http://localhost:8000/subscription/${pk}`);
+            console.log('Unsubscribed from server:', response.data);
+        } catch (error) {
+            console.error('Error unsubscribing from server:', error);
+        }
     }
-    // TODO: Tell server that this user unsubscribed
 };
-
 
 const urlBase64ToUint8Array = (base64String) => {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -80,7 +99,7 @@ const urlBase64ToUint8Array = (base64String) => {
 };
 
 // Replace with server's public key
-const applicationServerPublicKey = 'SERVER_PUBLIC_KEY';
+const applicationServerPublicKey = 'BCF8KCNOWaJWdTyTnRZF0cvEahPTLDzF9kO_rwqSYYIT-WDb9vi4ghVl9ztPig-pdAb1pLm4xYxOdziElgosz3Q';
 </script>
 
 <template>
