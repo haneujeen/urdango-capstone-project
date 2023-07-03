@@ -1,7 +1,9 @@
 from django.conf import settings
 from pywebpush import webpush, WebPushException
-from py_vapid import Vapid
 import json
+
+from transit.scheduler import untrack_bus
+
 
 class PushService:
     def __init__(self, subscription, message):
@@ -28,3 +30,5 @@ class PushService:
             if e.response and e.response.json():
                 extra = e.response.json()
                 print(f"Remote service replied with a {extra['code']}: {extra['errno']}")
+
+                untrack_bus(self.subscription.pk, self.subscription.veh_id, self.subscription.bus_route_id)
