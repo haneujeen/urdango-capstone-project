@@ -3,6 +3,24 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import requests
 from urllib.parse import unquote
+from django.http import JsonResponse, Http404
+from rest_framework import views, status
+from .models import PushSubscription, User
+from .push_service import PushService
+from rest_framework.views import APIView
+
+from django.views.decorators.csrf import csrf_exempt
+
+
+# Creates a new User object and returns the 'uuid' field to the client
+@csrf_exempt
+def get_uuid(reqeust):
+    user = User.objects.create()
+    response = JsonResponse({'uuid': str(user.uuid)})
+    response.set_cookie('uuid', str(user.uuid), secure=True, httponly=True)
+
+    return response
+
 
 @api_view(['GET'])
 def get_station_by_name(request, name):
@@ -30,6 +48,7 @@ def get_station_by_uid(request, id):
     response = requests.get(url, params=params)
     return Response(response.json())
 
+
 @api_view(['GET'])
 def get_bus_pos_by_rtid(request, rtid):
     url = 'http://ws.bus.go.kr/api/rest/buspos/getBusPosByRtid'
@@ -41,6 +60,7 @@ def get_bus_pos_by_rtid(request, rtid):
     }
     response = requests.get(url, params=params)
     return Response(response.json())
+
 
 @api_view(['GET'])
 def get_arr_info_by_route_all(reqeust, rtid):
@@ -54,6 +74,7 @@ def get_arr_info_by_route_all(reqeust, rtid):
     response = requests.get(url, params=params)
     return Response(response.json())
 
+
 @api_view(['GET'])
 def get_bus_pos_by_veh_id(reqeust, veh_id):
     url = 'http://ws.bus.go.kr/api/rest/buspos/getBusPosByVehId'
@@ -66,9 +87,6 @@ def get_bus_pos_by_veh_id(reqeust, veh_id):
     response = requests.get(url, params=params)
     return Response(response.json())
 
-
-import requests
-from django.http import JsonResponse, Http404
 
 def get_target_bus(request, veh_id, bus_route_id):
     try:
@@ -120,10 +138,6 @@ def get_target_bus(request, veh_id, bus_route_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-from rest_framework import views, status
-from rest_framework.response import Response
-from .models import PushSubscription
-from .serializers import PushSubscriptionSerializer
 
 class PushSubscriptionView(views.APIView):
     def post(self, request, *args, **kwargs):
@@ -157,11 +171,6 @@ class PushSubscriptionView(views.APIView):
         subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-
-from .push_service import PushService
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 class PushMessageView(APIView):
     def post(self, request, format=None):
