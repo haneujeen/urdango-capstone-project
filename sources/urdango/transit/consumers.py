@@ -1,6 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .scheduler import scheduler
 import json
+import asyncio
+from .tasks import update_target_bus
 
 
 class TargetBusConsumer(AsyncWebsocketConsumer):
@@ -11,8 +12,7 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
 
         # Start the job for this consumer
         self.job_id = f"{self.uuid}-{self.veh_id}-{self.bus_route_id}"
-        scheduler.add_job(self.send_bus, 'interval',
-                          seconds=10, id=self.job_id, replace_existing=True)
+        self.send_job = asyncio.create_task(self.send_bus())
 
         await self.accept()
 
@@ -22,7 +22,7 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
         }))
 
     async def disconnect(self, close_code):
-        pass
+        self.send_job.cancel()
 
     # Receive message from WebSocket
     async def receive(self, text_data):
@@ -33,4 +33,18 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'echo': message
         }))
+
+    async def send_bus(self):
+        try:
+            while True:
+                data = await update_target_bus(self.veh_id, self.bus_route_id)
+
+                await self.send(text_data=json.dumps({
+                    'message': data
+                }))
+
+                await asyncio.sleep(10)  # Wait for 10 seconds before sending the next message
+        except asyncio.CancelledError:
+            # Handle cancellation
+            pass
 

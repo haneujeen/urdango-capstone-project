@@ -1,15 +1,11 @@
 from urllib.parse import unquote
 from django.conf import settings
 import requests
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 from django.http import JsonResponse
-
-from transit.models import PushSubscription
-from transit.push_service import PushService
+import httpx
 
 
-def get_arr_info_by_route_all(rtid):
+async def get_arr_info_by_route_all(rtid):
     url = 'http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRouteAll'
 
     params = {
@@ -17,11 +13,13 @@ def get_arr_info_by_route_all(rtid):
         'busRouteId': rtid,
         'resultType': 'json'
     }
-    response = requests.get(url, params=params)
-    return response.json()
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+        return response.json()
 
 
-def get_bus_pos_by_veh_id(veh_id):
+async def get_bus_pos_by_veh_id(veh_id):
     url = 'http://ws.bus.go.kr/api/rest/buspos/getBusPosByVehId'
 
     params = {
@@ -29,19 +27,21 @@ def get_bus_pos_by_veh_id(veh_id):
         'vehId': veh_id,
         'resultType': 'json'
     }
-    response = requests.get(url, params=params)
-    return response.json()
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+        return response.json()
 
 
-def get_target_bus(veh_id, bus_route_id):
+async def get_target_bus(veh_id, bus_route_id):
     try:
         # get bus position by vehicle ID
-        response_bus_pos = get_bus_pos_by_veh_id(veh_id)
-        bus_pos_item = response_bus_pos.data['msgBody']['itemList'][0]
+        response_bus_pos = await get_bus_pos_by_veh_id(veh_id)
+        bus_pos_item = response_bus_pos['msgBody']['itemList'][0]
 
         # get all arrival info by route
-        response_route_all = get_arr_info_by_route_all(bus_route_id)
-        route_item_list = response_route_all.data['msgBody']['itemList']
+        response_route_all = await get_arr_info_by_route_all(bus_route_id)
+        route_item_list = response_route_all['msgBody']['itemList']
 
         # find the index of the station item where 'stId' matches with 'lastStnId' of bus_pos_item
         index, last_station_item = next(
@@ -78,34 +78,15 @@ def get_target_bus(veh_id, bus_route_id):
             'isLast': this_station_item['isLast1'],
         }
 
-        return JsonResponse(target_bus)
+        return target_bus
 
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return {'error': str(e)}
 
 
-def update_target_bus(user, veh_id, bus_route_id):
+async def update_target_bus(veh_id, bus_route_id):
     # Fetch data from the public API
-    data = get_target_bus(veh_id, bus_route_id)
+    data = await get_target_bus(veh_id, bus_route_id)
+    print(data)
 
-    # Prepare the data to send
-    message = {
-        'type': 'target_bus.update',
-        'data': data
-    }
-
-    # 1. Send to the WebSocket group
-    # # Get the channel layer
-    channel_layer = get_channel_layer()
-
-    # # Send the new data to the WebSocket group
-    async_to_sync(channel_layer.group_send)(f'bus_{veh_id}_{bus_route_id}', message)
-
-    # 2. Send a push notification
-    # # Get the individual subscription by primary key
-    subscription = PushSubscription.objects.get(user=user)
-
-    # # Send a push message
-    push_service = PushService(subscription, message)
-    push_service.send_push()
-
+    return data

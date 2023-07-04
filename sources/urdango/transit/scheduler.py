@@ -1,11 +1,11 @@
 # scheduler.py
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from .tasks import update_target_bus
+#from .tasks import update_target_bus
 
 
 scheduler = AsyncIOScheduler()
 
-
+"""
 def start_tracking(uuid, veh_id, bus_route_id):
     # Schedule the `update_target_bus` function to be called every 60 seconds
     scheduler.add_job(
@@ -24,3 +24,4 @@ def start_tracking(uuid, veh_id, bus_route_id):
 def stop_tracking(uuid, veh_id, bus_route_id):
     # Remove the job with the specified ID
     scheduler.remove_job(f'bus_{uuid}_{veh_id}_{bus_route_id}')
+"""

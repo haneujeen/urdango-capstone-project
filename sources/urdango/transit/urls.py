@@ -10,5 +10,6 @@ urlpatterns = [
     path('get_bus_pos_by_veh_id/<str:veh_id>/', get_bus_pos_by_veh_id, name='get_bus_pos_by_veh_id'),
     path('get_target_bus/<str:veh_id>/<str:bus_route_id>/', get_target_bus, name='get_target_bus'),
     path('subscription/', PushSubscriptionView.as_view(), name='subscription'),
-    path('push/', PushMessageView.as_view(), name='push')
+    path('push/', PushMessageView.as_view(), name='push'),
+    path('get_uuid/', get_uuid, name='get_uuid'),
 ]
