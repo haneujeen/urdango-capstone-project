@@ -159,15 +159,17 @@ class PushSubscriptionView(views.APIView):
         PushSubscription.objects.create(user=user, subscription=subscription)
         print('📦 I received a new push subscription!', subscription)
 
-        test_message = {
-            "title": "Here goes a title",
-            "body": "This is a message body.",
+        welcome_payload = {
+            "title": "Subscription created.",
+            "body": "Subscription created. The websocket will now be fetching and sending"
+                    " the same bus data. Unsubscribing should remove the current subscription object.",
             "icon": "/static/images/icon.png",
-            "url": "https://url.com"
+            "url": "https://url_for_testing.com"
         }
 
-        push_service = PushService(subscription, test_message)
-        push_service.send_push()
+        push_service = PushService(subscription)
+        push_service.payload = welcome_payload
+        push_service.send_notification()
 
         return Response({"detail": "Subscription created."}, status=status.HTTP_201_CREATED)
 

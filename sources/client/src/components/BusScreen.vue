@@ -1,7 +1,10 @@
 <!-- BusScreen.vue -->
 <script setup>
 import { ref } from 'vue'
-import SettingsCard from './SettingsCard.vue'
+
+const props = defineProps({
+    bus: Object
+})
 
 const busData = ref({
             rtNm: 'Bus 123',
@@ -37,7 +40,6 @@ const busData = ref({
                 <p class="m-0"><small>{{ busData.rtNm }} {{ busData.plainNo }} Speed: km/h Estimated Time: 000</small></p>
             </div>
         </div>
-        <SettingsCard/>
 </template>
 
 <style scoped>
@@ -51,8 +53,8 @@ const busData = ref({
     left: 15px; 
     top: 0;
     height: 100%;
-    width: 5px;
-    background: linear-gradient(to bottom, transparent, #000, #000, #000, transparent);
+    width: 8px;
+    background: linear-gradient(to bottom, transparent, #ccc, #ccc, #ccc, transparent);
 }
 .stop {
     position: relative;
@@ -63,19 +65,19 @@ const busData = ref({
     position: absolute;
     left: -20px;  
     top: 50%;
-    width: 15px;
-    height: 15px;
-    background: #111;
+    width: 18px;
+    height: 18px;
+    background: #ccc;
     border-radius: 50%;
     transform: translateY(-50%);
 }
 .stop.next::after {
     content: '';
     position: absolute;
-    left: -17px;  
+    left: -16px;  
     top: 50%;
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     background: #fff;
     border-radius: 50%;
     transform: translateY(-50%);

@@ -1,14 +1,19 @@
+<!-- Station.vue -->
 <script setup>
-import { ref } from 'vue';
+import { ref, onUnmounted } from 'vue';
 import axios from 'axios';
 import MyBus from './MyBus.vue';
+import { openConnection, closeConnection, trackBus, untrackBus } from './station'
+import { useStore } from 'vuex';
 
 const props = defineProps({
     station: Object,
     busList: Array
 });
 
-let selectedBus = ref(null);
+const store = useStore()
+const uuid = store.state.uuid
+
 let targetBus = ref(null);
 
 const handleClick = async (bus) => {
@@ -17,18 +22,8 @@ const handleClick = async (bus) => {
     console.log("adirection: ", bus.adirection)
     console.log("My vehId = bus.vehId1")
     
-    try {
-        const response = await axios.get(`http://localhost:8000/get_target_bus/${bus.vehId1}/${bus.busRouteId}/`);
-        
-        if (response.status === 200) {
-            targetBus.value = response.data;
-            console.log(targetBus.value);
-        } else {
-            console.error('Error retrieving bus data:', response.status, response.data);
-        }
-    } catch (error) {
-        console.error('Error retrieving bus data:', error);
-    }
+    openConnection(uuid, bus.vehId1, bus.busRouteId, targetBus);
+    console.log("Target Bus value in Station.vue: ", targetBus.value)
 }
 
 </script>
