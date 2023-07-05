@@ -141,13 +141,22 @@ def get_target_bus(request, veh_id, bus_route_id):
 
 class PushSubscriptionView(views.APIView):
     def post(self, request, *args, **kwargs):
-        print('request data before it\'s passed to the serializer: ', request.data)
-        subscription = request.data
+        print("Requesting!!!", request.data)
+        uuid = request.data.get('uuid')
+        if not uuid:
+            return Response({"detail": "No UUID provided."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(uuid=uuid)
+        except User.DoesNotExist:
+            return Response({"detail": "User does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+        subscription = request.data.get('subscription')
+        if not subscription:
+            return Response({"detail": "No subscription data provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         # TODO: Validate the subscription data here
 
-        PushSubscription.objects.create(subscription=subscription)
-
+        PushSubscription.objects.create(user=user, subscription=subscription)
         print('📦 I received a new push subscription!', subscription)
 
         test_message = {
@@ -162,9 +171,10 @@ class PushSubscriptionView(views.APIView):
 
         return Response({"detail": "Subscription created."}, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, pk, format=None):
+    def delete(self, request, format=None):
         try:
-            subscription = PushSubscription.objects.get(pk=pk)
+            user = User.objects.get(uuid=request.uuid)
+            subscription = PushSubscription.objects.get(user=user)
         except PushSubscription.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 

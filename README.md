@@ -7,6 +7,7 @@ The project is undertaken as part of academic curriculum.
 2. `pip install channels`
 3. `pip install daphne`
 4. `pip install httpx`
+5. `pip install asgiref`
 
 ## Setup
 1. Run `daphne urdango.asgi:application` to test WebSocket connection otherwise just `python manage.py runserver`
