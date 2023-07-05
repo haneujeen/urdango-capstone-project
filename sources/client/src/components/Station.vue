@@ -1,10 +1,10 @@
 <!-- Station.vue -->
 <script setup>
 import { ref, onUnmounted } from 'vue';
-import axios from 'axios';
-import MyBus from './MyBus.vue';
-import { openConnection, closeConnection, trackBus, untrackBus } from './station'
 import { useStore } from 'vuex';
+import SocketService from './socketService';
+import MyBus from './MyBus.vue';
+import { connect, disconnect } from './socket'
 
 const props = defineProps({
     station: Object,
@@ -13,6 +13,7 @@ const props = defineProps({
 
 const store = useStore()
 const uuid = store.state.uuid
+// const socketService = new SocketService()
 
 let targetBus = ref(null);
 
@@ -22,10 +23,19 @@ const handleClick = async (bus) => {
     console.log("adirection: ", bus.adirection)
     console.log("My vehId = bus.vehId1")
     
-    openConnection(uuid, bus.vehId1, bus.busRouteId, targetBus);
-    console.log("Target Bus value in Station.vue: ", targetBus.value)
+    connect(uuid, bus.vehId1, bus.busRouteId, targetBus);
+
+    // Connect to the server
+    // socketService.connect(uuid, bus.vehId1, bus.busRouteId, targetBus)
+
+    // socketService.onMessage((data) => {
+    //     targetBus.value = data
+    // })
 }
 
+// onUnmounted(() => {
+//    socketService.disconnect()
+// })
 </script>
 
 <template>

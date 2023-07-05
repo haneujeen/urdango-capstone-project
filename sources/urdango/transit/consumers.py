@@ -4,6 +4,8 @@ import json
 import asyncio
 
 from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
+
 from .tasks import update_target_bus
 from .push_service import PushService
 
@@ -69,25 +71,24 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
                     if data:
                         # 1.1. Socket simply sends the data to the client
                         await self.send(text_data=json.dumps(data))
-
                         # 2.1. Check for the push notification subscription
-                        user, subscription = await self.get_subscription()
-                        if subscription:
-                            print("Subscription found")
+                        try:
+                            await self.get_subscription()
                             # 2.2. Update the payload in the PushService
                             self.push_service.set_payload(data)
-
                             # 2.3. Send the notification
                             self.push_service.send_notification()
-                        else:
+
+                        except ObjectDoesNotExist:
                             print("No subscription found or this is an unsubscribed user")
                             pass
                     else:
                         print('No data received from update_target_bus')
                     await asyncio.sleep(10)  # Wait for 10 seconds before sending the next message
+
                 except Exception as e:
                     print(f'An error occurred: {e}')
-                    await asyncio.sleep(10)
+                    break
         except asyncio.CancelledError:
             # Handle cancellation
             print('Task was cancelled')
