@@ -39,9 +39,13 @@ const handleClick = async (bus) => {
 </script>
 
 <template>
-    <div class="card" v-if="!targetBus">
+    <div class="card border-0 shadow-sm rounded-4" v-if="!targetBus">
         <div class="card-body">
-            <h5 class="card-title">{{ station.stNm }} ({{ station.arsId }})</h5>
+            <h5 class="card-title">
+                <i class="fa-brands fa-lg fa-playstation" style="color: #333;"></i>
+                {{ station.stNm }} ({{ station.arsId }})
+                You're heading towards {{ station.next }}
+            </h5>
             <ul class="list-group list-group-flush">
                 <li 
                     class="list-group-item d-flex 
@@ -50,10 +54,34 @@ const handleClick = async (bus) => {
                     v-for="bus in busList"
                 >
                     <div>
+                        routeType: {{ bus.routeType }}
+                        <!-- 노선유형 (1:공항 w, 2:마을, 3:간선 b, 4:지선 g, 5:순환 y, 6:광역 r, 7:인천, 8:경기, 9:폐지, 0:공용 g) -->
                         busRouteAbrv: {{ bus.busRouteAbrv }} to {{ bus.nxtStn }}
+                        <!-- busRouteAbrv: 노선명 (안내용 – 마을버스 제외)
+                            rtNm: 노선명 (DB관리용) 
+                        -->
                         busRouteId: {{ bus.busRouteId }}
                         vehId1: {{ bus.vehId1 }}
-                        <span class="text-danger">{{ bus.arrmsg1 }}</span>
+                        <!-- vehId1 === 0: Bus stopped running -->
+                        <span class="text-danger">
+                            {{ bus.arrmsg1 }}
+                            <i class="fa-solid fa-van-shuttle fa-bounce" 
+                                style="color: #3a88fe;"
+                            ></i>
+                        </span>
+                        {{ bus.vehId2 }}
+                        <span v-if="bus.vehId1 === '0' && bus.vehId2 !== '0'">
+                            vehId2: {{ bus.vehId2 }}
+                            <i class="fa-solid fa-van-shuttle fa-bounce" 
+                                style="color: #3a88fe;"
+                            ></i>
+                        </span>
+                        <span v-if="bus.vehId1 === '0' && bus.vehId2 === '0'">
+                            pj party on street :(
+                            <i class="fa-solid fa-van-shuttle" 
+                                style="color: #3a88fe;"
+                            ></i>
+                        </span>
                     </div>
                     <button 
                         type="button" 
@@ -68,3 +96,9 @@ const handleClick = async (bus) => {
     </div>
     <MyBus v-if="targetBus" :bus="targetBus" />
 </template>
+
+<style scoped>
+* {
+    color: #333;
+}
+</style>

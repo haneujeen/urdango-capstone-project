@@ -9,7 +9,7 @@ const props = defineProps({
 })
 
 let selectedStation = ref(null);
-let busList = ref(null)
+let busList = ref(null) // Scheduled buses for the station
 
 const handleClick = async (station) => {
     console.log("Clicked")
@@ -17,6 +17,11 @@ const handleClick = async (station) => {
     try {
         const response = await axios.get(`http://localhost:8000/get_station_by_uid/${station.arsId}`);
         busList.value = response.data.msgBody.itemList;
+        
+        let randomNextStation = response.data.msgBody.itemList[0].nxtStn;
+        if (randomNextStation) {
+            selectedStation.value.next = randomNextStation;
+        }
     } catch (error) {
         console.error(error);
     }
