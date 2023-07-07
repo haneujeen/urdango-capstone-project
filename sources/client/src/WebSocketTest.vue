@@ -1,3 +1,4 @@
+<!-- WebSocketTest.vue -->
 <script setup>
 let socket;
 
