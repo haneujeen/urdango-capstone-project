@@ -59,6 +59,7 @@ const handleClick = async (bus) => {
                         busRouteAbrv: {{ bus.busRouteAbrv }} to {{ bus.nxtStn }}
                         <!-- busRouteAbrv: 노선명 (안내용 – 마을버스 제외)
                             rtNm: 노선명 (DB관리용) 
+                            ref: https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15000303
                         -->
                         busRouteId: {{ bus.busRouteId }}
                         vehId1: {{ bus.vehId1 }}
