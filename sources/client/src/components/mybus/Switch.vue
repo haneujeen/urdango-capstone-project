@@ -15,14 +15,25 @@ const BASE_URL = 'http://localhost:8000'
 onMounted(async () => {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
         try {
+            console.log("I")
             const registration = await navigator.serviceWorker.ready;
-            const subscription = await registration.pushManager.getSubscription();
-            console.log('Service Worker ready state:', navigator.serviceWorker.ready);
-            if (subscription) {
-                isChecked.value = true;
+            try {
+                console.log("hate")
+                const subscription = await registration.pushManager.getSubscription();
+                if (subscription) {
+                    console.log("this.")
+                    isChecked.value = true;
+                } else {
+                    console.log("subscribing user")
+                    await subscribeUserToPush(uuid, registration);
+                    isChecked.value = true;
+                }
+                console.log('Service Worker ready state:', navigator.serviceWorker.ready);
+            } catch (error) {
+                console.error('Error during getSubscription(): ', error);
             }
         } catch (error) {
-            console.error('Error during serviceWorker.ready or getSubscription(): ', error);
+            console.error('Error during serviceWorker.ready: ', error);
         }
     } else {
         console.log('Service Worker and/or Push Manager is not supported in this browser');
@@ -30,7 +41,10 @@ onMounted(async () => {
     }
 });
 
+
+
 watch(isChecked, async (newVal) => {
+    console.log('isChecked value changed: ', newVal);
     if ('serviceWorker' in navigator && 'PushManager' in window) {
         const registration = await navigator.serviceWorker.ready;
         if (newVal) {
@@ -72,8 +86,9 @@ const subscribeUserToPush = async (uuid, registration) => {
         throw error;
     }
 
+    let response;
     try {
-        const response = await axios.post(`${BASE_URL}/subscription/`, {
+        response = await axios.post(`${BASE_URL}/subscription/`, {
             uuid: uuid, 
             subscription: subscription.toJSON()
         });
