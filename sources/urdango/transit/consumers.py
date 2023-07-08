@@ -16,17 +16,18 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
         self.veh_id = self.scope['url_route']['kwargs']['veh_id']
         self.bus_route_id = self.scope['url_route']['kwargs']['bus_route_id']
 
-        # Start the job for this consumer
-        self.job_id = f"{self.uuid}-{self.veh_id}-{self.bus_route_id}"
-        self.send_job = asyncio.create_task(self.send_bus())
+        await self.accept()
 
         # Create a PushService instance
         self.push_service = PushService({})
 
+        # Start the job for this consumer
+        self.job_id = f"{self.uuid}-{self.veh_id}-{self.bus_route_id}"
+        self.send_job = asyncio.create_task(self.send_bus())
+        print("WebSocket task created")
+
         # Fetch and send initial data
         initial_bus = await update_target_bus(self.veh_id, self.bus_route_id)
-
-        await self.accept()
 
         await self.send(text_data=json.dumps(initial_bus))
         print('Initial data sent')
@@ -77,6 +78,7 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
                             # 2.2. Update the payload in the PushService
                             self.push_service.set_payload(data)
                             # 2.3. Send the notification
+                            print('Sending push notification')
                             self.push_service.send_notification()
 
                         except ObjectDoesNotExist:
