@@ -1,7 +1,5 @@
 from urllib.parse import unquote
 from django.conf import settings
-import requests
-from django.http import JsonResponse
 import httpx
 
 
@@ -64,18 +62,18 @@ async def get_target_bus(veh_id, bus_route_id):
             raise Exception('No matching next next station found')
 
         target_bus = {
-            'vehId': bus_pos_item['vehId'],
-            'routeId': last_station_item['rtNm'],
-            'plainNo': bus_pos_item['plainNo'],
-            'lastStnId': bus_pos_item['lastStnId'],
-            'lastStnNm': last_station_item['stNm'],
-            'this_station_id': this_station_item['stId'], # == last_station_item['nstnId1']
-            'this_station_name': this_station_item['stNm'],
+            'vehicle_id': bus_pos_item['vehId'], # A unique identifier for database
+            'line_name': last_station_item['rtNm'], # The name of line or route of the bus
+            'plate_number': bus_pos_item['plainNo'], # License plate number
+            'travel_time': this_station_item['traTime1'],  # travel time to this_station from last_station (departure)
+            'current_speed': this_station_item['traSpd1'],  # The current speed of vehicle
+            'is_last_car': this_station_item['isLast1'],  # Indicates whether there's no more buses following
+            'previous_station_id': bus_pos_item['lastStnId'], # ID of the stop that the bus most recently departed from
+            'previous_station_name': last_station_item['stNm'],
+            'station_id': this_station_item['stId'], # == last_station_item['nstnId1']
+            'station_name': this_station_item['stNm'],
             'next_station_id': next_station_item['stId'],
             'next_station_name': next_station_item['stNm'],
-            'traTime': this_station_item['traTime1'], # travel time to this_station from last_station (departure)
-            'traSpd': this_station_item['traSpd1'],
-            'isLast': this_station_item['isLast1'],
         }
 
         return target_bus

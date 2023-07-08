@@ -17,7 +17,7 @@ class PushService:
         print("🚀 push_service.py 14: ", json.dumps(data))
 
         self.payload = {
-            "title": f"Updating push for the vehicle {data['vehId']}",
+            "title": f"Updating push for the vehicle {data['vehicle_id']}",
             "body": "Message body",
         }
 

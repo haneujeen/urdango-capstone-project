@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -25,14 +26,14 @@ def get_uuid(reqeust):
 @api_view(['GET'])
 def get_station_by_name(request, name):
     url = 'http://ws.bus.go.kr/api/rest/stationinfo/getStationByName'
-    print(name)
 
     params = {
-        'serviceKey': unquote('GMDNZxLlo35v0mYu1b%2BEExd5aIdZ93RCUBhUBo2w73LWCtz%2Ft%2F%2FKdGfzDVUdcyqljjwvNa5Dtd56uELhovFZRw%3D%3D'),
+        'serviceKey': unquote(settings.BUS_API_KEY),
         'stSrch': name,
         'resultType': 'json'
     }
     response = requests.get(url, params=params)
+    print(response.json()['msgHeader']['headerCd'])
     return Response(response.json())
 
 
@@ -145,6 +146,7 @@ class PushSubscriptionView(views.APIView):
         uuid = request.data.get('uuid')
         if not uuid:
             return Response({"detail": "No UUID provided."}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             user = User.objects.get(uuid=uuid)
         except User.DoesNotExist:
@@ -174,13 +176,28 @@ class PushSubscriptionView(views.APIView):
         return Response({"detail": "Subscription created."}, status=status.HTTP_201_CREATED)
 
     def delete(self, request, format=None):
+        print("Deleting!!!", request.data)
+        uuid = request.data.get('uuid')
+        print("🔨uuid:", uuid)
+        if not uuid:
+            return Response({"detail": "No UUID provided."}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            user = User.objects.get(uuid=request.uuid)
+            print("🔨trying getting user and subscription object")
+            user = User.objects.get(uuid=uuid)
             subscription = PushSubscription.objects.get(user=user)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         except PushSubscription.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        subscription.delete()
+        try:
+            print("🔨trying deleting subscription object")
+            subscription.delete()
+            print("🔨maybe deleted")
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

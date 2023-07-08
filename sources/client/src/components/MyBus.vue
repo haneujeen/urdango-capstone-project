@@ -2,8 +2,9 @@
 <script setup>
 import { ref } from 'vue'
 
-import BusScreen from './BusScreen.vue';
-import SettingsCard from './SettingsCard.vue'
+import BusScreen from './mybus/BusScreen.vue';
+import StopButton from './mybus/StopButton.vue'
+import Switch from './mybus/Switch.vue'
 
 const props = defineProps({
     bus: Object
@@ -13,7 +14,13 @@ const props = defineProps({
 <template>
     <div>
         <BusScreen :bus="bus"/>
-        <SettingsCard/>
+        <StopButton/>
         <!-- <StopRequestButton/> -->
+        <div class="mx-3 text-start text-muted">
+            <span class="form-check form-switch">
+                <Switch/>
+                <label class="form-check-label" for="pushNotificationSwitch">Push Notification</label>
+            </span>
+        </div>
     </div>
 </template>
