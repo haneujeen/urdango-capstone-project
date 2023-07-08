@@ -9,7 +9,7 @@ const stopRequested = ref(false)
 <template>
     <!-- This sends request to the bus's receiver module the user's on right now. -->
     <p class="text-start pt-3"></p>
-    <div class="card border-0 px-0 pb-0 text-muted bg-light shadow-sm" style="border-radius: 25px;">
+    <div class="card border-0 px-0 pb-0 text-muted shadow-sm" style="border-radius: 25px;">
         <div class="m-4 mb-3">
             <button id="stopButton" class="btn btn-lg rounded-5 py-4" 
                 :class="[
@@ -19,6 +19,7 @@ const stopRequested = ref(false)
                 :disabled="stopRequested"
                 style="border: 10px solid #ffffff;"
                 data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                @click="stopRequested = true"
             >
                 <span class="h5">STOP</span>
                 <!-- TODO: add data for users with physical disadvantage -->
@@ -36,7 +37,7 @@ const stopRequested = ref(false)
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel"></h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="stopRequested = false"></button>
                 </div>
                 <div class="modal-body">
                     This immediately sends request to the bus's receiver module the user's on at the moment.
@@ -53,11 +54,13 @@ const stopRequested = ref(false)
 <style scoped>
 /* For web */
 #stopButton:hover {
-    background-color: #ce7474 !important; 
+    background-color: #b21f2d !important;
+    color: #fff;
 }
 
 /* For mobile devices */
 #stopButton:active {
-    background-color: #c45e5e !important;
+    background-color: #b21f2d !important;
+    color: #fff;
 }
 </style>

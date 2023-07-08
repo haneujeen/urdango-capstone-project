@@ -176,6 +176,7 @@ class PushSubscriptionView(views.APIView):
         return Response({"detail": "Subscription created."}, status=status.HTTP_201_CREATED)
 
     def delete(self, request, format=None):
+        # TODO: Send goodbye message?
         print("Deleting!!!", request.data)
         uuid = request.data.get('uuid')
         print("🔨uuid:", uuid)

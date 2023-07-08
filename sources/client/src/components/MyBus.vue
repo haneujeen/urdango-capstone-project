@@ -15,8 +15,7 @@ const props = defineProps({
     <div>
         <BusScreen :bus="bus"/>
         <StopButton/>
-        <!-- <StopRequestButton/> -->
-        <div class="mx-3 text-start text-muted">
+        <div class="mx-3 text-start text-muted mt-3">
             <span class="form-check form-switch">
                 <Switch/>
                 <label class="form-check-label" for="pushNotificationSwitch">Push Notification</label>
