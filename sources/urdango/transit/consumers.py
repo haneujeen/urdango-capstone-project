@@ -34,6 +34,8 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         self.send_job.cancel()
+        # Delete the User and its associated PushSubscription
+        await self.delete_user_and_subscription()
 
     # Receive message from WebSocket
     async def receive(self, text_data):
@@ -94,4 +96,17 @@ class TargetBusConsumer(AsyncWebsocketConsumer):
         except asyncio.CancelledError:
             # Handle cancellation
             print('Task was cancelled')
+
+    @sync_to_async
+    def delete_user_and_subscription(self):
+        User = apps.get_model('transit', 'User')
+        PushSubscription = apps.get_model('transit', 'PushSubscription')
+
+        try:
+            user = User.objects.get(uuid=self.uuid)
+            PushSubscription.objects.filter(user=user).delete()
+            user.delete()
+            print("User and associated PushSubscription deleted")
+        except ObjectDoesNotExist:
+            print("User or PushSubscription does not exist")
 
