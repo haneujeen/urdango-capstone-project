@@ -4,7 +4,8 @@ import { ref, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import SocketService from './socketService';
 import MyBus from './MyBus.vue';
-import { connect, disconnect } from './socket'
+import { connect, disconnect } from './socket';
+import { computed } from 'vue';
 
 const props = defineProps({
     station: Object,
@@ -36,6 +37,20 @@ const handleClick = async (bus) => {
 // onUnmounted(() => {
 //    socketService.disconnect()
 // })
+
+const busColor = (routeType) => {
+    let color;
+    switch (routeType) {
+        case '1': color = '#e6e7e1'; break; // white
+        case '3': color = '#3b73af'; break; // blue
+        case '4': color = '#c3c88a'; break; // green
+        case '5': color = '#ffc107'; break; // yellow
+        case '6': color = '#d36350'; break; // red
+        case '9': color = '#bbb'; break; // gray
+        default: color = '#c3c88a'; // green
+    }
+    return `color: ${color};`;
+}
 </script>
 
 <template>
@@ -64,24 +79,19 @@ const handleClick = async (bus) => {
                         busRouteId: {{ bus.busRouteId }}
                         vehId1: {{ bus.vehId1 }}
                         <!-- vehId1 === 0: Bus stopped running -->
-                        <span class="text-danger">
-                            {{ bus.arrmsg1 }}
-                            <i class="fa-solid fa-van-shuttle fa-bounce" 
-                                style="color: #3a88fe;"
-                            ></i>
-                        </span>
+                        
                         {{ bus.vehId2 }}
                         <span v-if="bus.vehId1 === '0' && bus.vehId2 !== '0'">
-                            vehId2: {{ bus.vehId2 }}
-                            <i class="fa-solid fa-van-shuttle fa-bounce" 
-                                style="color: #3a88fe;"
-                            ></i>
+                            vehId2: {{ bus.arrmsg2 }}
+                            <i class="fa-solid fa-van-shuttle fa-bounce" :style="busColor(bus.routeType)"></i>
                         </span>
-                        <span v-if="bus.vehId1 === '0' && bus.vehId2 === '0'">
-                            pj party on street :(
-                            <i class="fa-solid fa-van-shuttle" 
-                                style="color: #3a88fe;"
-                            ></i>
+                        <span v-else-if="bus.vehId1 === '0' && bus.vehId2 === '0'">
+                            Bus has stopped running. Please check other options.
+                            <i class="fa-solid fa-van-shuttle" :style="busColor('9')"></i>
+                        </span>
+                        <span class="text-danger" v-else>
+                            {{ bus.arrmsg1 }}
+                            <i class="fa-solid fa-van-shuttle fa-bounce" :style="busColor(bus.routeType)"></i>
                         </span>
                     </div>
                     <button 
